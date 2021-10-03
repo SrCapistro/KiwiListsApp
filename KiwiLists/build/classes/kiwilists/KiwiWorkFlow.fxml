@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane id="AnchorPane" prefHeight="465.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kiwilists.KiwiWorkFlowController">
+   <children>
+      <Pane layoutY="43.0" prefHeight="445.0" prefWidth="645.0">
+         <children>
+            <ScrollPane layoutY="31.0" prefHeight="382.0" prefWidth="645.0">
+               <content>
+                  <ListView fx:id="listView" onMouseClicked="#listElementMouseClicked" prefHeight="380.0" prefWidth="643.0" />
+               </content>
+            </ScrollPane>
+            <Button fx:id="buttonAddList" layoutY="413.0" mnemonicParsing="false" onAction="#buttonAddListClicked" prefHeight="34.0" prefWidth="645.0" text="+" />
+            <Button layoutX="589.0" layoutY="-2.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" text="Delete" />
+            <Label fx:id="listName" layoutX="285.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="76.0" text="MIS LISTAS" />
+            <Button fx:id="btnBack" layoutY="-2.0" mnemonicParsing="false" onAction="#buttonBackClicked" prefHeight="34.0" prefWidth="56.0" text="&lt;" />
+            <Button fx:id="btnEdit" layoutX="533.0" layoutY="-2.0" mnemonicParsing="false" onAction="#buttonEditClicked" prefHeight="34.0" prefWidth="56.0" text="Edit" />
+         </children>
+      </Pane>
+      <Pane prefHeight="41.0" prefWidth="645.0" style="-fx-background-color: black;" />
+   </children>
+</AnchorPane>
