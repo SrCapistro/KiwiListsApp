@@ -17,12 +17,15 @@
 package kiwilists;
 
 import ControlObject.ControlList;
+import Objects.Element;
 import Objects.List;
-import Objects.ListenerVariable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,12 +35,29 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 
 /**
@@ -45,22 +65,29 @@ import javafx.stage.Stage;
  * @author josuecg
  */
 public class KiwiWorkFlowController implements Initializable {
-    ControlList controlList = new ControlList();
+    public static int elementStatus = 0;
+    public ControlList controlList = new ControlList();
+    public static String listSelected;
+    public static String elementSelected;
     public static String nameListTo;
-    boolean isElement = false;
-    int contador = 0;
+    private boolean elementScreen = false;
+    public boolean isElement = false;
+    public int contador = 0;
+    
+    
     @FXML
     private ListView listView;
     @FXML
     private Label listName;
     @FXML
-    private Button btnEdit;
-    @FXML
     private Button btnBack;
+    @FXML
+    private TextArea tbDescriptionArea;
+    @FXML
+    private Button btnAddList;
     @FXML
     public void buttonBackClicked(){
         listView.setEditable(false);
-        btnEdit.setVisible(true);
         isElement = false;
         listName.setText("MIS LISTAS");
         chargeLists();
@@ -68,40 +95,18 @@ public class KiwiWorkFlowController implements Initializable {
         System.out.println(isElement);
     }
     
+    /**
+     * This method is for adding elements on the system, if is on the list screen, it calls the register list window
+     * if is on the element's list section, it calls to the register element window
+     * @param event
+     * @throws IOException 
+     */
     @FXML
-    public void buttonAddListClicked() throws IOException{
-         ListenerVariable hiloListener = new ListenerVariable();
-         Thread nuevoh = new Thread(hiloListener);
+    public void buttonAddListClicked(ActionEvent event) throws IOException{
         if(!isElement){
-            int idList = (int)(Math.random()*99999+1);
-            ArrayList<String> listElements = new ArrayList<String>();
-            listElements.add("Element 1");
-            listElements.add("Element 2");
-            listElements.add("Element 3");
-            String nameList = "List "+controlList.countLists();
-            List newList = new List();
-            newList.setNameList(nameList);
-            newList.setIdList(idList);
-            newList.setElementsList(listElements);
-            controlList.addNewList(newList);
-            chargeLists();
+            addNewList();
         }else{
-           nuevoh.start();
-           Stage newWindow = new Stage();
-           newWindow.setTitle("Add element");
-           FXMLLoader loader = new FXMLLoader(getClass().getResource("KiwiAddElementList.fxml"));
-           newWindow.setScene(new Scene(loader.load()));
-           newWindow.show();
-           nuevoh.interrupt();
-        }
-    }
-    
-    @FXML 
-    public void buttonEditClicked(final ActionEvent event){
-        if(!listView.getSelectionModel().isEmpty()){
-            listView.setEditable(true);
-            listView.edit(listView.getSelectionModel().getSelectedIndex());
-            listView.setEditable(false);
+            addNewListElement();
         }
     }
     
@@ -121,24 +126,108 @@ public class KiwiWorkFlowController implements Initializable {
                     nameListTo = listName.getText();
                     listName.setAlignment(Pos.CENTER);
                     isElement = true;
-                    btnEdit.setVisible(false);
-                    btnBack.setVisible(true);
+                    if(isElement){
+                        btnBack.setVisible(true);
+                    }
                 }catch(NullPointerException nullP){
-                    //Nothing happens when the list is selected on empty item
+                    isElement = false;
                 }
             }else if(me.getClickCount() !=2 && isElement){
-                System.out.println(listView.isEditable());
-                listView.setEditable(true);
-                listView.setCellFactory(TextFieldListCell.forListView());
-                System.out.println(me.getClickCount());
-                listView.setOnEditCommit(new EventHandler<ListView.EditEvent<String>>(){
-                    @Override
-                    public void handle(ListView.EditEvent<String> event) {
-                        listView.getItems().set(event.getIndex(), event.getNewValue());
-                    }
-                });
+                elementSelected = listView.getSelectionModel().getSelectedItem().toString();
+            }else if(me.getClickCount() == 1 && !isElement){
+                try{
+                    listSelected = listView.getSelectionModel().getSelectedItem().toString();
+                    List list = controlList.findListSelected(listView.getSelectionModel().getSelectedItem().toString());
+                    tbDescriptionArea.setText(list.getDescriptionList());
+                }catch(NullPointerException nullP){
+                    //Nothing happens when the list is selected on empy item
+                }
+            }else if(me.getClickCount() !=0 && isElement){
+                try{
+                    elementSelected = listView.getSelectionModel().getSelectedItem().toString();
+                }catch(NullPointerException nullp){
+                    nullp.printStackTrace();
+                }
             }
         });
+    }
+    
+    /***
+     * This method creates the window for creating a new list on the system
+     * @return 
+     */
+    public void addNewList() throws IOException{
+        elementStatus = 0;
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("KiwiAddElementList.fxml"));
+        Parent parent = fxmlLoader.load();
+        KiwiAddElementListController addController = fxmlLoader.<KiwiAddElementListController>getController();
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.setTitle("Add a new list");
+        stage.showAndWait();
+        System.out.println(addController.hasSaved);
+        if(addController.hasSaved==true){
+            this.chargeLists();
+        }
+    }
+ 
+    public void addNewListElement() throws IOException{
+        elementStatus = 1;
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("KiwiAddElementList.fxml"));
+        Parent parent = fxmlLoader.load();
+        KiwiAddElementListController addController = fxmlLoader.<KiwiAddElementListController>getController();
+        
+        Scene scene = new Scene(parent);
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.setTitle("Add a new element");
+        stage.showAndWait();
+        if(addController.hasSaved==true){
+            this.chargeElementList(nameListTo);
+        }
+    }
+    
+    public void editList(){
+        elementStatus = 3;
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("KiwiAddElementList.fxml"));
+            Parent parent = fxmlLoader.load();
+            KiwiAddElementListController addController = fxmlLoader.<KiwiAddElementListController>getController();
+            Scene scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.setTitle("Edit list");
+            stage.showAndWait();
+            if(addController.hasSaved==true){
+                chargeLists();
+            }
+        } catch (IOException ex) {
+            //Nothing happens
+        }
+    }
+    
+    public void editElementList(){
+        elementStatus = 4;
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("KiwiAddElementList.fxml"));
+            Parent parent = fxmlLoader.load();
+            KiwiAddElementListController addController = fxmlLoader.<KiwiAddElementListController>getController();
+            Scene scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.setTitle("Edit element");
+            stage.showAndWait();
+            if(addController.hasSaved==true){
+                this.chargeElementList(nameListTo);
+            }
+        } catch (IOException ex) {
+            //Nothing happens
+        }
     }
     
     /***
@@ -148,13 +237,12 @@ public class KiwiWorkFlowController implements Initializable {
     public void chargeElementList(String nameList){
         List listToChargeElements;
         listToChargeElements = controlList.findListSelected(nameList);
-        ArrayList<String> elementsList = listToChargeElements.getElementsList();
+        ArrayList<Element> elementsList = listToChargeElements.getElementsList();
         ObservableList<String> elements = FXCollections.observableArrayList();
-        for(String listElements: elementsList){
-            elements.add(listElements);
+        for(Element listElements: elementsList){
+            elements.add(listElements.getNameElement());
         }
         listView.setItems(elements);
-        
     }
     
     /***
@@ -169,40 +257,86 @@ public class KiwiWorkFlowController implements Initializable {
         listView.setItems(namesList);
     }
     
+    public void createContextMenu() throws IOException{
+        final ContextMenu contextOption = new ContextMenu();
+        MenuItem deleteItem = new MenuItem("Delete");
+        MenuItem editItem = new MenuItem("Edit");
+        menuItemActionDelete(deleteItem);
+        menuItemActionEdit(editItem);
+        contextOption.getItems().add(editItem);
+        contextOption.getItems().add(deleteItem);
+        hideContextMenu(contextOption);
+        displayContextMenu(contextOption);
+    }
     
+    /***
+     * This method display the context menu by the selected item on the list
+     * @param contextMenu It passed a contextMenu to display
+     */
+    public void displayContextMenu(ContextMenu contextMenu){
+         listView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+            @Override
+            public void handle(MouseEvent event) {
+               if(event.getButton().equals(MouseButton.SECONDARY) && listView.getSelectionModel().getSelectedItem()!=null){
+                   contextMenu.show(listView,event.getScreenX(),event.getScreenY());
+               }
+            }
+        });   
+    }
+    
+    public void hideContextMenu(ContextMenu contextMenu){
+        listView.addEventFilter(MouseEvent.MOUSE_ENTERED_TARGET, event ->{
+            contextMenu.hide();
+        });
+    }
+    
+    public void menuItemActionDelete(MenuItem deleteItem){
+        System.out.println(isElement);
+        deleteItem.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                try{
+                    if(isElement){
+                        List listNew = controlList.findListSelected(nameListTo);
+                        listNew.getElementsList().remove(listView.getSelectionModel().getSelectedItem().toString());
+                        int i = controlList.modifyList(listNew);
+                        System.out.println(i);
+                        chargeElementList(listNew.getNameList());
+                    }else{
+                        List listNew = controlList.findListSelected(listView.getSelectionModel().getSelectedItem().toString());
+                        controlList.removeList(listNew);
+                        chargeLists();
+                    }
+                   
+                }catch(NullPointerException npe){
+                   
+                }
+            }
+        });
+    }
+    
+    public void menuItemActionEdit(MenuItem editItem) throws IOException{
+        editItem.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+               if(isElement){
+                   editElementList();
+               }else{
+                   editList();
+               }
+            }
+        });
+       
+        
+    }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        chargeLists();
        btnBack.setVisible(false);
-       listView.setCellFactory(TextFieldListCell.forListView());
-       listView.setEditable(false);
-       btnEdit.disableProperty().bind(Bindings.createBooleanBinding(
-               () -> listView.getSelectionModel().isEmpty(),
-               listView.getSelectionModel().getSelectedItems()
-       ));
-    }    
-    
-    public class ListenerVariable implements Runnable{
-        
-    public void chargeElementList(String nameList){
-        List listToChargeElements;
-        listToChargeElements = controlList.findListSelected(nameList);
-        ArrayList<String> elementsList = listToChargeElements.getElementsList();
-        ObservableList<String> elements = FXCollections.observableArrayList();
-        for(String listElements: elementsList){
-            elements.add(listElements);
+        try {
+            createContextMenu();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
-        listView.setItems(elements);
     }
-    
-    @Override
-    public void run() {
-        System.out.println("Escuchando variable al cambio");
-        do{
-            System.out.println("Escuchando..");
-        }while(KiwiAddElementListController.hasSaved!=true);
-        this.chargeElementList(nameListTo);
-    }
-    
-}
 }

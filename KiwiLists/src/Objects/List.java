@@ -15,16 +15,27 @@ import java.util.ArrayList;
 public class List implements Serializable{
     private int idList;
     private String nameList;
-    private ArrayList<String> elementsList;
-
-    public List() {
+    private ArrayList<Element> elementsList;
+    private String descriptionList;
+    
+    public List(){
+        this.idList = (int)(Math.random()*9999+1);
     }
     
-    public List(String nameList) {
+    public List(String nameList){
         this.nameList = nameList;
+        this.descriptionList = "Sin descripción";
+    }
+
+    public String getDescriptionList() {
+        return descriptionList;
+    }
+
+    public void setDescriptionList(String descriptionList) {
+        this.descriptionList = descriptionList;
     }
     
-    public List(int idList, String nameList, ArrayList<String> elementsList) {
+    public List(int idList, String nameList, ArrayList<Element> elementsList) {
         this.idList = idList;
         this.nameList = nameList;
         this.elementsList = elementsList;
@@ -46,13 +57,16 @@ public class List implements Serializable{
         this.nameList = nameList;
     }
 
-    public ArrayList<String> getElementsList() {
+    public ArrayList<Element> getElementsList() {
         return elementsList;
     }
 
-    public void setElementsList(ArrayList<String> elementsList) {
+    public void setElementsList(ArrayList<Element> elementsList) {
         this.elementsList = elementsList;
     }
     
+    public int generateID(){
+        return this.idList = (int)(Math.random()*9999+1);
+    }
     
 }

@@ -4,10 +4,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="465.0" prefWidth="645.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kiwilists.KiwiWorkFlowController">
+<AnchorPane id="AnchorPane" prefHeight="488.0" prefWidth="772.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="kiwilists.KiwiWorkFlowController">
    <children>
       <Pane layoutY="43.0" prefHeight="445.0" prefWidth="645.0">
          <children>
@@ -17,12 +19,20 @@
                </content>
             </ScrollPane>
             <Button fx:id="buttonAddList" layoutY="413.0" mnemonicParsing="false" onAction="#buttonAddListClicked" prefHeight="34.0" prefWidth="645.0" text="+" />
-            <Button layoutX="589.0" layoutY="-2.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" text="Delete" />
-            <Label fx:id="listName" layoutX="285.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="76.0" text="MIS LISTAS" />
-            <Button fx:id="btnBack" layoutY="-2.0" mnemonicParsing="false" onAction="#buttonBackClicked" prefHeight="34.0" prefWidth="56.0" text="&lt;" />
-            <Button fx:id="btnEdit" layoutX="533.0" layoutY="-2.0" mnemonicParsing="false" onAction="#buttonEditClicked" prefHeight="34.0" prefWidth="56.0" text="Edit" />
+            <Label fx:id="listName" layoutX="255.0" layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="135.0" text="MIS LISTAS" />
+            <Button fx:id="btnBack" layoutY="-2.0" mnemonicParsing="false" onAction="#buttonBackClicked" prefHeight="34.0" prefWidth="43.0" text="&lt;" />
          </children>
       </Pane>
-      <Pane prefHeight="41.0" prefWidth="645.0" style="-fx-background-color: black;" />
+      <Pane prefHeight="41.0" prefWidth="842.0" style="-fx-background-color: black;" />
+      <Pane layoutX="644.0" layoutY="41.0" prefHeight="445.0" prefWidth="198.0">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" text="Description:">
+               <font>
+                  <Font name="System Bold Italic" size="15.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="tbDescriptionArea" editable="false" layoutX="11.0" layoutY="41.0" prefHeight="396.0" prefWidth="173.0" />
+         </children>
+      </Pane>
    </children>
 </AnchorPane>

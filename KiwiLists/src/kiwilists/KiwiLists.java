@@ -31,7 +31,6 @@ public class KiwiLists extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("KiwiWorkFlow.fxml"));
-        
         Scene scene = new Scene(root);
         stage.setTitle("Kiwi lists");
         stage.setScene(scene);

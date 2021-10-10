@@ -54,6 +54,24 @@ public class ControlList {
         return saved;
     }
     
+    public void removeList(List list){
+        ArrayList<List> listOfLists = new ArrayList<List>();
+        File f = null;
+        listOfLists = returnLists();
+        for(List listToFind:listOfLists){
+            if(listToFind.getIdList()==list.getIdList()){
+                listOfLists.remove(listToFind);
+                break;
+            }
+        }
+     
+        deleteFile();
+        
+        for(List listToSave:listOfLists){
+            this.addNewList(listToSave);
+        }
+    }
+    
     public List findListSelected(String nameList){
         ArrayList<List> searchList;
         searchList = this.returnLists();
@@ -76,6 +94,7 @@ public class ControlList {
             if(listToFind.getIdList()==list.getIdList()){
                 listOfLists.remove(listToFind);
                 listOfLists.add(list);
+                isModified = 1;
                 break;
             }
         }
@@ -127,6 +146,18 @@ public class ControlList {
             }
         }
         return listReturned;
+    }
+    
+    public boolean proveNameList(String nameList){
+        boolean exists = false;
+        ArrayList<List> listOfLists = this.returnLists();
+        for(List list:listOfLists){
+            if(nameList.equals(list.getNameList())){
+                exists = true;
+                break;
+            }
+        }
+        return exists;
     }
     
     public int countLists(){
