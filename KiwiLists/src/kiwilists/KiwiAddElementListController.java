@@ -72,6 +72,7 @@ public class KiwiAddElementListController implements Initializable {
         List listToModify = controlList.findListSelected(listName);
         List newListModify = controlList.findListSelected(KiwiWorkFlowController.nameListTo);
         Element newElement = new Element(tfNameList.getText());
+        newElement.setDescriptionElement(this.tbDescription.getText());
         newListModify.getElementsList().add(newElement);
         controlList.modifyList(newListModify);
         hasSaved = true;
@@ -84,7 +85,7 @@ public class KiwiAddElementListController implements Initializable {
         ArrayList<Element> listElements = new ArrayList<Element>();
         listElements.add(new Element("New element 1"));
         listElements.add(new Element("New element 2"));
-        listElements.add(new Element("New eleent 3"));
+        listElements.add(new Element("New element 3"));
         newList.setNameList(tfNameList.getText());
         newList.setDescriptionList(tbDescription.getText());
         newList.setElementsList(listElements);
@@ -116,9 +117,12 @@ public class KiwiAddElementListController implements Initializable {
                 listElement.add(elementToModify);
                 listModified.setElementsList(listElement);
                 controlList.modifyList(listModified);
+                hasSaved = true;
                 break;
             }
         }
+        Stage stage = (Stage) btnAdd.getScene().getWindow();
+        stage.close();
     }
     
     public Element findElement(String elementToFind, ArrayList<Element> listElement){
@@ -135,6 +139,7 @@ public class KiwiAddElementListController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         lbTextEmpty.setVisible(false);
+        this.tbDescription.setWrapText(true);
     }    
     
 }

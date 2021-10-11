@@ -125,6 +125,7 @@ public class KiwiWorkFlowController implements Initializable {
                     listName.setText(nameList);
                     nameListTo = listName.getText();
                     listName.setAlignment(Pos.CENTER);
+                    tbDescriptionArea.clear();
                     isElement = true;
                     if(isElement){
                         btnBack.setVisible(true);
@@ -133,7 +134,11 @@ public class KiwiWorkFlowController implements Initializable {
                     isElement = false;
                 }
             }else if(me.getClickCount() !=2 && isElement){
-                elementSelected = listView.getSelectionModel().getSelectedItem().toString();
+                try{
+                    elementSelected = listView.getSelectionModel().getSelectedItem().toString();
+                }catch(NullPointerException nullp){
+                    //Nothing happens
+                }
             }else if(me.getClickCount() == 1 && !isElement){
                 try{
                     listSelected = listView.getSelectionModel().getSelectedItem().toString();
@@ -142,11 +147,17 @@ public class KiwiWorkFlowController implements Initializable {
                 }catch(NullPointerException nullP){
                     //Nothing happens when the list is selected on empy item
                 }
-            }else if(me.getClickCount() !=0 && isElement){
+            }else if(me.getClickCount()!=0 && isElement){
                 try{
                     elementSelected = listView.getSelectionModel().getSelectedItem().toString();
+                    List listSelectedElement = controlList.findListSelected(nameListTo);
+                    for(Element element: listSelectedElement.getElementsList()){
+                        if(element.getNameElement().equals(elementSelected)){
+                            tbDescriptionArea.setText(element.getDescriptionElement());
+                        }
+                    }
                 }catch(NullPointerException nullp){
-                    nullp.printStackTrace();
+                    //Nothing happens just contrying the exception
                 }
             }
         });
@@ -274,7 +285,7 @@ public class KiwiWorkFlowController implements Initializable {
      * @param contextMenu It passed a contextMenu to display
      */
     public void displayContextMenu(ContextMenu contextMenu){
-         listView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
+        listView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
             @Override
             public void handle(MouseEvent event) {
                if(event.getButton().equals(MouseButton.SECONDARY) && listView.getSelectionModel().getSelectedItem()!=null){
@@ -298,9 +309,13 @@ public class KiwiWorkFlowController implements Initializable {
                 try{
                     if(isElement){
                         List listNew = controlList.findListSelected(nameListTo);
-                        listNew.getElementsList().remove(listView.getSelectionModel().getSelectedItem().toString());
-                        int i = controlList.modifyList(listNew);
-                        System.out.println(i);
+                        for(Element element: listNew.getElementsList()){
+                            if(element.getNameElement().equals(listView.getSelectionModel().getSelectedItem().toString())){
+                                listNew.getElementsList().remove(element);
+                                break;
+                            }
+                        }
+                        controlList.modifyList(listNew);
                         chargeElementList(listNew.getNameList());
                     }else{
                         List listNew = controlList.findListSelected(listView.getSelectionModel().getSelectedItem().toString());
@@ -332,6 +347,8 @@ public class KiwiWorkFlowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        chargeLists();
+       this.listName.setAlignment(Pos.CENTER);
+       this.tbDescriptionArea.setWrapText(true);
        btnBack.setVisible(false);
         try {
             createContextMenu();
