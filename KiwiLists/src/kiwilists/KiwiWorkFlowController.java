@@ -177,6 +177,7 @@ public class KiwiWorkFlowController implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.setTitle("Add a new list");
+        stage.setResizable(false);
         stage.showAndWait();
         System.out.println(addController.hasSaved);
         if(addController.hasSaved==true){
@@ -195,6 +196,7 @@ public class KiwiWorkFlowController implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.setTitle("Add a new element");
+        stage.setResizable(false);
         stage.showAndWait();
         if(addController.hasSaved==true){
             this.chargeElementList(nameListTo);
@@ -212,6 +214,7 @@ public class KiwiWorkFlowController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.setTitle("Edit list");
+            stage.setResizable(false);
             stage.showAndWait();
             if(addController.hasSaved==true){
                 chargeLists();
@@ -232,6 +235,7 @@ public class KiwiWorkFlowController implements Initializable {
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.setTitle("Edit element");
+            stage.setResizable(false);
             stage.showAndWait();
             if(addController.hasSaved==true){
                 this.chargeElementList(nameListTo);
@@ -276,6 +280,8 @@ public class KiwiWorkFlowController implements Initializable {
         menuItemActionEdit(editItem);
         contextOption.getItems().add(editItem);
         contextOption.getItems().add(deleteItem);
+        deleteItem.setStyle("-fx-text-fill: white;");
+        editItem.setStyle("-fx-text-fill: white;");
         hideContextMenu(contextOption);
         displayContextMenu(contextOption);
     }
@@ -302,7 +308,6 @@ public class KiwiWorkFlowController implements Initializable {
     }
     
     public void menuItemActionDelete(MenuItem deleteItem){
-        System.out.println(isElement);
         deleteItem.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
@@ -347,6 +352,7 @@ public class KiwiWorkFlowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
        chargeLists();
+       listView.setStyle("-fx-control-inner-background: #01497c;");
        this.listName.setAlignment(Pos.CENTER);
        this.tbDescriptionArea.setWrapText(true);
        btnBack.setVisible(false);

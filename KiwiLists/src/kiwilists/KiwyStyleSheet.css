@@ -1,0 +1,50 @@
+.list-cell:selected {
+    -fx-cell-size: 60 ;
+    -fx-background-color: #012a4a;
+    -fx-border-color: #012a4a;
+}
+.list-cell:hover{
+  -fx-background-color: #012a4a;
+}
+.list-cell{
+  list-cell-background: #01497c;
+  -fx-font-size: 20px;
+}
+.list-cell, .split-pane {
+  -fx-background-insets: 0;
+  -fx-padding: 2;
+}
+
+.description{
+  text-area-background: #01497c;
+  -fx-font-size: 20px;
+  -fx-text-fill: white;
+  -fx-border-radius: 0;
+  -fx-border-color: #012a4a;
+  -fx-font-weight: bold;
+}
+.panel{
+  -fx-background-color: #012a4a;
+  -fx-text-fill: white;
+}
+.text-area .content {
+    -fx-background-color: text-area-background;
+}
+
+.button{
+  -fx-background-color: #01497c;
+  -fx-background-radius: 0;
+  -fx-font-size: 25px;
+  -fx-font-weight: bold;
+}
+.button:hover{
+  -fx-background-color: #006ab5;
+}
+
+.label{
+  -fx-font-weight: bold;
+}
+.textfield{
+    -fx-background-color: #01497c;
+    -fx-border-radius: 0;
+}

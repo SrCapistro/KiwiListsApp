@@ -52,9 +52,9 @@ public class KiwiAddElementListController implements Initializable {
     
     @FXML
     public void buttonAddElementMouseClicked(){
-        System.out.println(elementSelected);
         if(tfNameList.getText().equals("")){
             lbTextEmpty.setVisible(true);
+            
         }else{
             if(KiwiWorkFlowController.elementStatus == 1){
                 saveElement();
@@ -130,7 +130,6 @@ public class KiwiAddElementListController implements Initializable {
         for(Element element:listElement){
             if(elementToFind.equals(element.getNameElement())){
                 elementFound = element;
-                System.out.println(elementFound.getNameElement());
                 break;
             }
         }
